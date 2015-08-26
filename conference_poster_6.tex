@@ -1,0 +1,252 @@
+%\title{LaTeX Portrait Poster Template}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% a0poster Portrait Poster
+% LaTeX Template
+% Version 1.0 (22/06/13)
+%
+% The a0poster class was created by:
+% Gerlinde Kettl and Matthias Weiser (tex@kettl.de)
+% 
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[a0,portrait]{a0poster}
+
+\usepackage{multicol} % This is so we can have multiple columns of text side-by-side
+\columnsep=100pt % This is the amount of white space between the columns in the poster
+\columnseprule=3pt % This is the thickness of the black line between the columns in the poster
+
+\usepackage[svgnames]{xcolor} % Specify colors by their 'svgnames', for a full list of all colors available see here: http://www.latextemplates.com/svgnames-colors
+
+\usepackage{times} % Use the times font
+%\usepackage{palatino} % Uncomment to use the Palatino font
+
+\usepackage{graphicx} % Required for including images
+\graphicspath{{figures/}} % Location of the graphics files
+\usepackage{booktabs} % Top and bottom rules for table
+\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
+\usepackage{wrapfig} % Allows wrapping text around tables and figures
+\usepackage{hyperref}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	POSTER HEADER 
+%----------------------------------------------------------------------------------------
+
+% The header is divided into two boxes:
+% The first is 75% wide and houses the title, subtitle, names, university/organization and contact information
+% The second is 25% wide and houses a logo for your university/organization or a photo of you
+% The widths of these boxes can be easily edited to accommodate your content as you see fit
+
+\begin{minipage}[b]{0.75\linewidth}
+\veryHuge \color{NavyBlue} \textbf{Code Clone Detection in Clang Static Analyzer} \color{Black}\\ % Title
+\Huge\textit{Detecting Copy-paste using Static Analysis}\\[2cm] % Subtitle
+\huge \textbf{Kirill Bobyrev \& Vassil Vassilev}\\[0.5cm] % Author(s)
+\huge MIPT University \& CERN\\[0.4cm] % University/organization
+\Large \texttt{kbobyrev@hotmail.com} --- +7-915-118-74-89\\
+\Large \texttt{vvasilev@cern.ch}\\
+\end{minipage}
+%
+\begin{minipage}[b]{0.25\linewidth}
+\includegraphics[width=20cm]{logo.png}\\
+\end{minipage}
+
+\vspace{1cm} % A bit of extra whitespace between the header and poster content
+
+%----------------------------------------------------------------------------------------
+
+\begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\color{SaddleBrown} % SaddleBrown color for the introduction
+
+\section*{Introduction}
+
+The copy-paste is a common programming practice. Most of the programmers start from a code snippet, which already exists in the system and modify it to match their needs. Easily, some of the code snippets end up being copied dozens of times. This manual process is error prone, which leads to a seamless introduction of new hard-to-find bugs. Also, copy-paste usually means worse maintainability, understandability and logical design. Clang and Clang's static analyzer provide all the building blocks to build a generic C/C++ copy-paste detecting infrastructure. The infrastructure should be evolved alongside with useful features such as bug checkers and compiler diagnostics.
+
+%----------------------------------------------------------------------------------------
+%	OBJECTIVES
+%----------------------------------------------------------------------------------------
+
+\color{Black} % Black color for the rest of the content
+
+\section*{Main Objectives}
+
+\begin{enumerate}
+\item Lorem ipsum dolor sit amet, consectetur.
+\item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
+\item Praesent tortor libero, vulputate quis elementum a, iaculis.
+\item Phasellus a quam mauris, non varius mauris. Fusce tristique, enim tempor varius porta, elit purus commodo velit, pretium mattis ligula nisl nec ante.
+\item Ut adipiscing accumsan sapien, sit amet pretium.
+\item Estibulum est purus, ultricies cursus volutpat
+\item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
+\item Praesent tortor libero, vulputate quis elementum a, iaculis.
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+%	CODE CLONE TAXONOMY
+%----------------------------------------------------------------------------------------
+
+\section*{Code Clone Taxonomy}
+
+Code fragments can be similar in two ways: syntactically and functionally. Code clones of 
+types 1, 2 and 3 share different levels of syntactical similarity while code clones of type 4
+share functional similarity, i.e. perform identical operations while having completely different
+syntax.
+
+\begin{itemize}
+\item \textbf{Type 1} Identical code fragments except for variations in whitespace (may be also
+variations in layout) and comments. 
+\href{https://gist.github.com/omtcyf0/33a00a4f4406f5933526}{Examples}
+\item \textbf{Type 2} Structurally/syntactically identical fragments except for variations in identifiers,
+literals, types, layout and comments.
+\href{https://gist.github.com/omtcyf0/1e6812f98302f374da53}{Examples}
+\item \textbf{Type 3} Copied fragments with further modifications. Statements can be changed,
+added or removed in addition to variations in identifiers, literals, types, layout
+and comments
+\href{https://gist.github.com/omtcyf0/dde978ef6696cf47aff8}{Examples}
+\item \textbf{Type 4} Two or more code fragments that perform the same computation but
+implemented through different syntactic variants.
+\href{https://gist.github.com/omtcyf0/2ce1c8962d9a5552cf35}{Examples}
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+%	APPEARANCE OF CLONES INT THE PROJECT
+%----------------------------------------------------------------------------------------
+
+\section*{Appearance of clones in the project}
+
+Code clones of types 1, 2 and 3 usually appear because of copy-pasting code into different parts
+of the projects and slightly changing it. Clones of types 3 and 4 may appear as a result of
+trying to implement the functionality that is similar to one that has been already implemented
+in the project.
+
+%----------------------------------------------------------------------------------------
+%	MATERIALS AND METHODS
+%----------------------------------------------------------------------------------------
+
+\section*{Materials and Methods}
+
+There are many techniques of code clone detection, which can be divided by the actual material
+they process:
+
+\begin{itemize}
+\item Text-based Techniques
+\item Token-based Techniques
+\item Tree-based Techniques
+\item PDG-based Techniques
+\item Metrics-based Techniques
+\end{itemize}
+
+AST-, PDG- and Metrics-based techniques usually have the highest recall and are more precise. 
+However, the most successful solutions usually combine few of these techniques in order to use
+their strengths.
+
+%------------------------------------------------
+
+\section*{clone.BasicCloneChecker}
+
+The basic clone checker uses the Clang AST infrastructure to find clones in the projects. It's
+very fast and has high precision. However, it's recall isn't great and it may miss many clones.
+
+BasicCloneChecker is able to find code clones of types 1 and 2 with high precision. It 
+
+%------------------------------------------------
+
+\section*{clone.AdvancedCloneChecker}
+
+AdvancedCloneChecker combines the Tree- and 
+
+%----------------------------------------------------------------------------------------
+%	RESULTS 
+%----------------------------------------------------------------------------------------
+
+\section*{Results}
+
+Donec faucibus purus at tortor egestas eu fermentum dolor facilisis. Maecenas tempor dui eu neque fringilla rutrum. Mauris \emph{lobortis} nisl accumsan. Aenean vitae risus ante.
+%
+\begin{wraptable}{l}{12cm} % Left or right alignment is specified in the first bracket, the width of the table is in the second
+\begin{tabular}{l l l}
+\toprule
+\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
+\midrule
+Treatment 1 & 0.0003262 & 0.562 \\
+Treatment 2 & 0.0015681 & 0.910 \\
+Treatment 3 & 0.0009271 & 0.296 \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\color{Green} Table caption}
+\end{wraptable}
+
+
+\begin{center}\vspace{1cm}
+\includegraphics[width=0.8\linewidth]{placeholder}
+\captionof{figure}{\color{Green} Figure caption}
+\end{center}\vspace{1cm}
+
+In hac habitasse platea dictumst. Etiam placerat, risus ac.
+
+Adipiscing lectus in magna blandit:
+
+\begin{center}\vspace{1cm}
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2} \\
+\midrule
+Treatment 1 & 0.0003262 & 0.562 \\
+Treatment 2 & 0.0015681 & 0.910 \\
+Treatment 3 & 0.0009271 & 0.296 \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\color{Green} Table caption}
+\end{center}\vspace{1cm}
+
+Vivamus sed nibh ac metus tristique tristique a vitae ante. Sed lobortis mi ut arcu fringilla et adipiscing ligula rutrum. Aenean turpis velit, placerat eget tincidunt nec, ornare in nisl. In placerat.
+
+\begin{center}\vspace{1cm}
+\includegraphics[width=0.8\linewidth]{placeholder}
+\captionof{figure}{\color{Green} Figure caption}
+\end{center}\vspace{1cm}
+
+%----------------------------------------------------------------------------------------
+%	FORTHCOMING IMPROVEMENTS
+%----------------------------------------------------------------------------------------
+
+\section*{Forthcoming Improvements}
+
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+
+\nocite{*} % Print all references regardless of whether they were cited in the poster or not
+\bibliographystyle{plain} % Plain referencing style
+\bibliography{sample} % Use the example bibliography file sample.bib
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\section*{Acknowledgements}
+
+Big thanks to ISP RAS research, who were so kind to share the results of their work with me.
+
+%----------------------------------------------------------------------------------------
+
+\end{multicols}
+\end{document}
