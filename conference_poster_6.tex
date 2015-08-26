@@ -87,14 +87,12 @@ The copy-paste is a common programming practice. Most of the programmers start f
 \section*{Main Objectives}
 
 \begin{enumerate}
-\item Lorem ipsum dolor sit amet, consectetur.
-\item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
-\item Praesent tortor libero, vulputate quis elementum a, iaculis.
-\item Phasellus a quam mauris, non varius mauris. Fusce tristique, enim tempor varius porta, elit purus commodo velit, pretium mattis ligula nisl nec ante.
-\item Ut adipiscing accumsan sapien, sit amet pretium.
-\item Estibulum est purus, ultricies cursus volutpat
-\item Nullam at mi nisl. Vestibulum est purus, ultricies cursus volutpat sit amet, vestibulum eu.
-\item Praesent tortor libero, vulputate quis elementum a, iaculis.
+\item Research the existing techniques used to detect code clones and analyze their strengths and
+weaknesses
+\item Implement a simple and fast checker for Clang Static Analyzer, which would have high precision, medium recall and have almost no false-positives in order to be reliant
+\item Implement a more sophisticated checker for Clang Static Analyzer, which would have high recall
+and possibly generate quite many false-positive reports, but will detect almost any possible clones 
+in any codebase
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
@@ -112,13 +110,16 @@ syntax.
 \item \textbf{Type 1} Identical code fragments except for variations in whitespace (may be also
 variations in layout) and comments. 
 \href{https://gist.github.com/omtcyf0/33a00a4f4406f5933526}{Examples}
+
 \item \textbf{Type 2} Structurally/syntactically identical fragments except for variations in identifiers,
 literals, types, layout and comments.
 \href{https://gist.github.com/omtcyf0/1e6812f98302f374da53}{Examples}
+
 \item \textbf{Type 3} Copied fragments with further modifications. Statements can be changed,
 added or removed in addition to variations in identifiers, literals, types, layout
 and comments
 \href{https://gist.github.com/omtcyf0/dde978ef6696cf47aff8}{Examples}
+
 \item \textbf{Type 4} Two or more code fragments that perform the same computation but
 implemented through different syntactic variants.
 \href{https://gist.github.com/omtcyf0/2ce1c8962d9a5552cf35}{Examples}
@@ -156,6 +157,9 @@ AST-, PDG- and Metrics-based techniques usually have the highest recall and are 
 However, the most successful solutions usually combine few of these techniques in order to use
 their strengths.
 
+Both checkers only detect clones in the same TranslationUnit due to Clang Static Analyzer's
+singularity.
+
 %------------------------------------------------
 
 \section*{clone.BasicCloneChecker}
@@ -163,13 +167,49 @@ their strengths.
 The basic clone checker uses the Clang AST infrastructure to find clones in the projects. It's
 very fast and has high precision. However, it's recall isn't great and it may miss many clones.
 
-BasicCloneChecker is able to find code clones of types 1 and 2 with high precision. It 
+BasicCloneChecker is able to find code clones of types 1 and 2 with high precision. However, it
+is very sensitive to the slight changes in analyzed AST. Because of that even slightly changed 
+pieces of code (namely Code Clones of type 3) end up not detected. It detects similar sub-trees, so
+the detected piece of code should be a sub-tree of a single AST node.
+
+\subsection*{Computational complexity}
+
+It takes $O(s)$ (where s denotes statements count in analyzed AST) time to store all statements 
+from the AST and then it takes $O(x)$ (where x denotes each AST node child count) time to build the 
+profiles. Hash map is there to provide $O(1)$ computational complexity to access collisions as
+two statements and their sub-trees are considered to be clones if hashes of their Profiles are 
+equal. It makes the overall (worst-case scenario) computational complexity $O(n^2)$ (where n 
+denotes total number of AST nodes).
+
+The heaviest part is building Profiles for each clang::Stmt and if I could make this process 
+incremental, so that building Profiles for some tree would have $O(n)$ (where n denotes number of 
+nodes in that tree) time instead of $O(n^2)$, I could reduce overall complexity to $O(n)$.
 
 %------------------------------------------------
 
 \section*{clone.AdvancedCloneChecker}
 
-AdvancedCloneChecker combines the Tree- and 
+AdvancedCloneChecker combines the Tree- and PDG-based techniques and implements the approach
+proposed by Jens Krinke in his paper \cite{FineGrainedPDG}. It detects clones of type 1, 2 and 3. 
+It relies on the implemented Fine-Grained PDG data structure, which is basically PDG built from AST 
+nodes. Then it runs the maximum similar subgraph searching algorithm to detect similar FGPDG 
+subgraphs and creates diagnostics.
+
+The general problem "Finding maximum similar subgraphs" is NP-complete, that is why the implemented 
+algorithm is just an approximate approach, which is the best thing one could possibly do.
+
+Granularity is very important part of this approach, because it only processes the comparison
+units and the partitioning part is essential. If chosen badly, it can lead to the state, in which
+the checker is right now: even if the algorithm extracts subgraphs with fairly good accuracy
+not many clones can be detected, because the comparison units are either to big or do not fit
+the needed conditions. The implemented algorithm partitions into connected components, which are
+compared against each other afterwards. This approach has many negative effects I encountered
+while processing large codebases.
+
+\subsection*{Computational complexity}
+
+The overall Computational complexity of the algorithm is $O(n^4)$ and it can not be reduced. It's 
+pretty slow, but the approach allows to detect even type 3 clones, which is valuable part.
 
 %----------------------------------------------------------------------------------------
 %	RESULTS 
@@ -177,58 +217,51 @@ AdvancedCloneChecker combines the Tree- and
 
 \section*{Results}
 
-Donec faucibus purus at tortor egestas eu fermentum dolor facilisis. Maecenas tempor dui eu neque fringilla rutrum. Mauris \emph{lobortis} nisl accumsan. Aenean vitae risus ante.
-%
-\begin{wraptable}{l}{12cm} % Left or right alignment is specified in the first bracket, the width of the table is in the second
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\color{Green} Table caption}
-\end{wraptable}
-
-
-\begin{center}\vspace{1cm}
-\includegraphics[width=0.8\linewidth]{placeholder}
-\captionof{figure}{\color{Green} Figure caption}
-\end{center}\vspace{1cm}
-
-In hac habitasse platea dictumst. Etiam placerat, risus ac.
-
-Adipiscing lectus in magna blandit:
+This shows the performance measurement while compiling few open-source projects with and without
+BasicCloneChecker. The same tests weren't performed for AdvancedCloneChecker as it's still not
+quite ready to process large codebases.
 
 \begin{center}\vspace{1cm}
 \begin{tabular}{l l l l}
 \toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2} \\
+\textbf{Project} & \textbf{without fakec invocation, s.} & \textbf{clone.BasicCloneChecker, s.}\\
 \midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
+Git &  84 & 144 \\
+SDL &  0  & 0   \\
+LLVM & 0  & 0   \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\color{Green} Table caption}
+\captionof{table}{\color{Green} Running time measurement}
 \end{center}\vspace{1cm}
 
-Vivamus sed nibh ac metus tristique tristique a vitae ante. Sed lobortis mi ut arcu fringilla et adipiscing ligula rutrum. Aenean turpis velit, placerat eget tincidunt nec, ornare in nisl. In placerat.
+BasicCloneChecker detects many clones in SDL projects, which show that the library isn't designed
+really well. It also detects some clones in Git project. There weren't any reports generated while
+compiling LLVM+Clang.
 
-\begin{center}\vspace{1cm}
-\includegraphics[width=0.8\linewidth]{placeholder}
-\captionof{figure}{\color{Green} Figure caption}
-\end{center}\vspace{1cm}
+Unfortunately, I am unable to give the exact numbers as the reports contain some false-positives
+and garbage warnings at the moment.
+
+AdvancedCloneChecker also generates warnings for Git and SDL projects. No diagnostics were emitted
+in the process of compiling LLVM+Clang, too.
+
+LINK TO A SAMPLE REPORT CONTAINING FEW REAL CLONES FROM SDL, GIT, OTHER PROJECTS
 
 %----------------------------------------------------------------------------------------
-%	FORTHCOMING IMPROVEMENTS
+%	FORTHCOMING IMPROVEMENTS AND CONCLUSION
 %----------------------------------------------------------------------------------------
 
-\section*{Forthcoming Improvements}
+\section*{Forthcoming Improvements and Conclusion}
 
-
+\begin{itemize}
+\item Before presenting clone.BasicCloneChecker to the Clang community and sending its patch to 
+the mainline it should no longer produce garbage warnings and and it should emit reports hooked to 
+the scan-build engine. It would take few fixes and improvements.
+\item However, clone.AdvancedCloneChecker still requires a lot of work: as running on the big 
+projects shows the granularity wasn't chosen well enough and it doesn't detect many clones in
+various big projects as it was expected. Some of checker parts may be reworked and I'll continue
+experimenting with different approaches. Potential new approach that would be tested in future
+is applying Value Graph Translation Validation technique \cite{ValueGraphLLVM}
+\end{itemize}
 
 %----------------------------------------------------------------------------------------
 %	REFERENCES
@@ -236,7 +269,7 @@ Vivamus sed nibh ac metus tristique tristique a vitae ante. Sed lobortis mi ut a
 
 \nocite{*} % Print all references regardless of whether they were cited in the poster or not
 \bibliographystyle{plain} % Plain referencing style
-\bibliography{sample} % Use the example bibliography file sample.bib
+\bibliography{biblio} % Use the example bibliography file sample.bib
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
@@ -245,6 +278,17 @@ Vivamus sed nibh ac metus tristique tristique a vitae ante. Sed lobortis mi ut a
 \section*{Acknowledgements}
 
 Big thanks to ISP RAS research, who were so kind to share the results of their work with me.
+
+I'd also like to thank Nick Lewycky, who did some initial work on detecting useless conditions
+for Clang.
+
+%----------------------------------------------------------------------------------------
+%	CODE
+%----------------------------------------------------------------------------------------
+
+\section*{Code}
+
+Code is avalible in my \href{https://github.com/omtcyf0/clang}{fork} of Clang on GitHub.
 
 %----------------------------------------------------------------------------------------
 
