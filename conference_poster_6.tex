@@ -37,6 +37,7 @@
 \usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
 \usepackage{wrapfig} % Allows wrapping text around tables and figures
 \usepackage{hyperref}
+\usepackage{listings}
 
 \begin{document}
 
@@ -126,17 +127,6 @@ implemented through different syntactic variants.
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
-%	APPEARANCE OF CLONES INT THE PROJECT
-%----------------------------------------------------------------------------------------
-
-\section*{Appearance of clones in the project}
-
-Code clones of types 1, 2 and 3 usually appear because of copy-pasting code into different parts
-of the projects and slightly changing it. Clones of types 3 and 4 may appear as a result of
-trying to implement the functionality that is similar to one that has been already implemented
-in the project.
-
-%----------------------------------------------------------------------------------------
 %	MATERIALS AND METHODS
 %----------------------------------------------------------------------------------------
 
@@ -220,6 +210,16 @@ pretty slow, but the approach allows to detect even type 3 clones, which is valu
 This shows the performance measurement while compiling few open-source projects with and without
 BasicCloneChecker. The same tests weren't performed for AdvancedCloneChecker as it's still not
 quite ready to process large codebases.
+
+\begin{lstlisting}[frame=single]
+scan-build --use-analyzer=${PATH_TO_BUILT_CLANG} \
+-enable-checker clone.BasicCloneChecker          \
+-disable-checker core                            \
+-disable-checker unix                            \
+-disable-checker cplusplus                       \
+-disable-checker deadcode                        \
+-k make
+\end{lstlisting}
 
 \begin{center}\vspace{1cm}
 \begin{tabular}{l l l l}
