@@ -38,6 +38,7 @@
 \usepackage{wrapfig} % Allows wrapping text around tables and figures
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage{color}
 
 \begin{document}
 
@@ -51,7 +52,7 @@
 % The widths of these boxes can be easily edited to accommodate your content as you see fit
 
 \begin{minipage}[b]{0.75\linewidth}
-\veryHuge \color{NavyBlue} \textbf{Code Clone Detection in Clang Static Analyzer} \color{Black}\\ % Title
+\veryHuge \textbf{Code Clone Detection in Clang Static Analyzer} \color{Black}\\ % Title
 \Huge\textit{Detecting Copy-paste using Static Analysis}\\[2cm] % Subtitle
 \huge \textbf{Kirill Bobyrev \& Vassil Vassilev}\\[0.5cm] % Author(s)
 \huge MIPT University \& CERN\\[0.4cm] % University/organization
@@ -110,20 +111,20 @@ syntax.
 \begin{itemize}
 \item \textbf{Type 1} Identical code fragments except for variations in whitespace (may be also
 variations in layout) and comments. 
-\href{https://gist.github.com/omtcyf0/33a00a4f4406f5933526}{Examples}
+\href{https://gist.github.com/omtcyf0/33a00a4f4406f5933526}{\color{blue} Examples}
 
 \item \textbf{Type 2} Structurally/syntactically identical fragments except for variations in identifiers,
 literals, types, layout and comments.
-\href{https://gist.github.com/omtcyf0/1e6812f98302f374da53}{Examples}
+\href{https://gist.github.com/omtcyf0/1e6812f98302f374da53}{\color{blue} Examples}
 
 \item \textbf{Type 3} Copied fragments with further modifications. Statements can be changed,
 added or removed in addition to variations in identifiers, literals, types, layout
-and comments
-\href{https://gist.github.com/omtcyf0/dde978ef6696cf47aff8}{Examples}
+and comments.
+\href{https://gist.github.com/omtcyf0/dde978ef6696cf47aff8}{\color{blue} Examples}
 
 \item \textbf{Type 4} Two or more code fragments that perform the same computation but
 implemented through different syntactic variants.
-\href{https://gist.github.com/omtcyf0/2ce1c8962d9a5552cf35}{Examples}
+\href{https://gist.github.com/omtcyf0/2ce1c8962d9a5552cf35}{\color{blue} Examples}
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
@@ -229,6 +230,7 @@ scan-build --use-analyzer=${PATH_TO_BUILT_CLANG} \
 Git &  84 & 144 \\
 SDL &  0  & 0   \\
 LLVM & 0  & 0   \\
+curl & 48 & 52  \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\color{Green} Running time measurement}
@@ -288,7 +290,8 @@ for Clang.
 
 \section*{Code}
 
-Code is avalible in my \href{https://github.com/omtcyf0/clang}{fork} of Clang on GitHub.
+Code is avalible in my \href{https://github.com/omtcyf0/clang}{\color{blue} fork} of Clang on
+GitHub.
 
 %----------------------------------------------------------------------------------------
 
