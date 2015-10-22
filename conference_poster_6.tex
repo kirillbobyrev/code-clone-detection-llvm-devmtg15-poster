@@ -41,8 +41,10 @@
 \usepackage{floatrow}
 \usepackage{subfig}
 \usepackage{color}
+\usepackage{multicol}
+\usepackage{lipsum}
+\usepackage{float}
 \usepackage{floatrow}
-
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,shadows}
 
@@ -103,12 +105,6 @@ for building such a tool and provide the stability. Therefore the tool is implem
 as additional checkers for the Clang Static Analyzer. Clang SA along with scan-build
 are really easy to use and can generate informative reports containing all the warnings.
 
-%----------------------------------------------------------------------------------------
-%	TIKZ FIGURE
-%----------------------------------------------------------------------------------------
-
-\section*{Analysis scheme}
-
 % Define block styles used later
 
 \tikzstyle{sensor}=[draw, fill=gray!20, text width=5em, text centered,
@@ -118,8 +114,8 @@ are really easy to use and can generate informative reports containing all the w
 \def\blockdist{2.3}
 \def\edgedist{2.5}
 
-\vspace{1cm}
-
+\begin{figure}[H]
+\centering
 \begin{tikzpicture}
     \node (Analyzed_Sources) [sensor]  {Analyzed sources};
     \path (Analyzed_Sources.east)+(3.0,0.0) node (scan-build)[sensor]
@@ -140,8 +136,9 @@ are really easy to use and can generate informative reports containing all the w
     \draw[thick,->] (compiler.east) -- (object-code.west);
     \draw[thick,->] (static-analyzer.east) -- (report.west);
 \end{tikzpicture}
+\caption{Full process of analysis and compilation}
+\end{figure}
 
-\vspace{1cm}
 
 %----------------------------------------------------------------------------------------
 %	CLONE TYPES
@@ -229,7 +226,8 @@ allows to detect even type 3 clones.
   norm/.style={edge from parent/.style={black, draw}}
 }
 
-\begin{center}
+\begin{figure}[H]
+\centering
 \begin{tikzpicture}
   [
     grow                    = down,
@@ -287,7 +285,8 @@ allows to detect even type 3 clones.
       		   edge from parent node [above] {3}}
     edge from parent node [above] {1} };
 \end{tikzpicture}
-\end{center}
+\caption{Similar subgraphs}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	COMMON PROBLEMS
