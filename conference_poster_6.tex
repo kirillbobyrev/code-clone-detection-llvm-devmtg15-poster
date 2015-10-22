@@ -23,9 +23,9 @@
 
 \usepackage{multicol} % This is so we can have multiple columns of text side-by-side
 \columnsep=100pt % This is the amount of white space between the columns in the poster
-\columnseprule=3pt % This is the thickness of the black line between the columns in the poster
+\columnseprule=3pt
 
-\usepackage[svgnames]{xcolor} % Specify colors by their 'svgnames', for a full list of all colors available see here: http://www.latextemplates.com/svgnames-colors
+\usepackage[svgnames]{xcolor}
 
 \usepackage{times} % Use the times font
 %\usepackage{palatino} % Uncomment to use the Palatino font
@@ -33,12 +33,15 @@
 \usepackage{graphicx} % Required for including images
 \graphicspath{{figures/}} % Location of the graphics files
 \usepackage{booktabs} % Top and bottom rules for table
-\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
-\usepackage{amsfonts, amsmath, amsthm, amssymb} % For math fonts, symbols and environments
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{amsfonts, amsmath, amsthm, amssymb}
 \usepackage{wrapfig} % Allows wrapping text around tables and figures
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{color}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,shadows}
 
 \begin{document}
 
@@ -46,17 +49,12 @@
 %	POSTER HEADER 
 %----------------------------------------------------------------------------------------
 
-% The header is divided into two boxes:
-% The first is 75% wide and houses the title, subtitle, names, university/organization and contact information
-% The second is 25% wide and houses a logo for your university/organization or a photo of you
-% The widths of these boxes can be easily edited to accommodate your content as you see fit
-
 \begin{minipage}[b]{0.75\linewidth}
 \veryHuge \textbf{Code Clone Detection in Clang Static Analyzer} \color{Black}\\ % Title
 \Huge\textit{Detecting Copy-paste using Static Analysis}\\[2cm] % Subtitle
 \huge \textbf{Kirill Bobyrev \& Vassil Vassilev}\\[0.5cm] % Author(s)
-\huge MIPT University \& CERN\\[0.4cm] % University/organization
-\Large \texttt{kbobyrev@hotmail.com} --- +7-915-118-74-89\\
+\huge MIPT \& CERN\\[0.4cm] % University/organization
+\Large \texttt{kbobyrev@hotmail.com}\\
 \Large \texttt{vvasilev@cern.ch}\\
 \end{minipage}
 %
@@ -68,149 +66,149 @@
 
 %----------------------------------------------------------------------------------------
 
-\begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
+\begin{multicols}{2}
 
-%----------------------------------------------------------------------------------------
-%	INTRODUCTION
-%----------------------------------------------------------------------------------------
-
-\color{SaddleBrown} % SaddleBrown color for the introduction
-
-\section*{Introduction}
-
-The copy-paste is a common programming practice. Most of the programmers start from a code snippet, which already exists in the system and modify it to match their needs. Easily, some of the code snippets end up being copied dozens of times. This manual process is error prone, which leads to a seamless introduction of new hard-to-find bugs. Also, copy-paste usually means worse maintainability, understandability and logical design. Clang and Clang's static analyzer provide all the building blocks to build a generic C/C++ copy-paste detecting infrastructure. The infrastructure should be evolved alongside with useful features such as bug checkers and compiler diagnostics.
+\color{Black} % Black color for the rest of the content
 
 %----------------------------------------------------------------------------------------
 %	OBJECTIVES
 %----------------------------------------------------------------------------------------
 
-\color{Black} % Black color for the rest of the content
+\section*{Motivation}
 
-\section*{Main Objectives}
-
-\begin{enumerate}
-\item Research the existing techniques used to detect code clones and analyze their strengths and
-weaknesses
-\item Implement a simple and fast checker for Clang Static Analyzer, which would have high precision, medium recall and have almost no false-positives in order to be reliant
-\item Implement a more sophisticated checker for Clang Static Analyzer, which would have high recall
-and possibly generate quite many false-positive reports, but will detect almost any possible clones 
-in any codebase
-\end{enumerate}
-
-%----------------------------------------------------------------------------------------
-%	CODE CLONE TAXONOMY
-%----------------------------------------------------------------------------------------
-
-\section*{Code Clone Taxonomy}
-
-Code fragments can be similar in two ways: syntactically and functionally. Code clones of 
-types 1, 2 and 3 share different levels of syntactical similarity while code clones of type 4
-share functional similarity, i.e. perform identical operations while having completely different
-syntax.
-
-\begin{itemize}
-\item \textbf{Type 1} Identical code fragments except for variations in whitespace (may be also
-variations in layout) and comments. 
-\href{https://gist.github.com/omtcyf0/33a00a4f4406f5933526}{\color{blue} Examples}
-
-\item \textbf{Type 2} Structurally/syntactically identical fragments except for variations in identifiers,
-literals, types, layout and comments.
-\href{https://gist.github.com/omtcyf0/1e6812f98302f374da53}{\color{blue} Examples}
-
-\item \textbf{Type 3} Copied fragments with further modifications. Statements can be changed,
-added or removed in addition to variations in identifiers, literals, types, layout
-and comments.
-\href{https://gist.github.com/omtcyf0/dde978ef6696cf47aff8}{\color{blue} Examples}
-
-\item \textbf{Type 4} Two or more code fragments that perform the same computation but
-implemented through different syntactic variants.
-\href{https://gist.github.com/omtcyf0/2ce1c8962d9a5552cf35}{\color{blue} Examples}
-\end{itemize}
+The copy-paste is a common programming practice. Recent studies show that large 5-20\% of 
+code in large codebases is either equal or similar to other code pieces in this project. 
+This causes troubles and makes development process way harder. Having a code clone in a 
+system almost always means that its design needs serious improvements. Large projects are
+developed by numerous people and fixing a bug found in one code clone instance may cause
+unexpected results, because this fix most likely won't be applied to every other 
+instance similar to the fixed one. Thus said, the practice of copy-pasting a piece of
+code into multiple locations. Having a tool that detects these clones and produces a
+human-readable report allows finding such pieces of code and improving the architecture.
 
 %----------------------------------------------------------------------------------------
-%	MATERIALS AND METHODS
+%	INFRASTRUCTURE CHOICE
 %----------------------------------------------------------------------------------------
 
-\section*{Materials and Methods}
+\section*{Infrastructure choice}
 
-There are many techniques of code clone detection, which can be divided by the actual material
-they process:
+Even though such tools exist, most of them are not easy to use. Most of them are also
+outdated and because of that they can't catch up with the latest language standards and
+new features. Building a Code Clone Detection Tool around Clang and Clang Static Analyzer
+allows not worrying about these problems. LLVM and Clang provide a great infrastructure
+for building such a tool and provide the stability. Therefore the tool is implemented
+as additional checkers for the Clang Static Analyzer. Clang SA along with scan-build
+are really easy to use and can generate informative reports containing all the warnings.
 
-\begin{itemize}
-\item Text-based Techniques
-\item Token-based Techniques
-\item Tree-based Techniques
-\item PDG-based Techniques
-\item Metrics-based Techniques
-\end{itemize}
+%----------------------------------------------------------------------------------------
+%	CLONE TYPES
+%----------------------------------------------------------------------------------------
 
-AST-, PDG- and Metrics-based techniques usually have the highest recall and are more precise. 
-However, the most successful solutions usually combine few of these techniques in order to use
-their strengths.
+\section*{Clone types}
 
-Both checkers only detect clones in the same TranslationUnit due to Clang Static Analyzer's
-singularity.
+Let's quickly review how clones are different from each other and which types are there
+to get a better understanding what can the current implementation do and what can it not.
 
-%------------------------------------------------
+\begin{description}
+  \item[Type I] Identical code fragments except for variations in whitespace, layout and
+  comments.
+  \item[Type II] Syntactically identical fragments except for variations in identifiers,
+  literals, types, whitespace, layout and comments.
+  \item[Type III] Copied fragments with further modifications such as changed, added or
+  removed statements, in addition to variations in identifiers, literals, types,
+  whitespace, layout and comments.
+  \item[Type IV] Two or more code fragments that perform the same computation but are
+  implemented by different syntactic variants.
+\end{description}
+
+
+
+%----------------------------------------------------------------------------------------
+%	CLONE.BASICCLONECHECKER
+%----------------------------------------------------------------------------------------
 
 \section*{clone.BasicCloneChecker}
 
-The basic clone checker uses the Clang AST infrastructure to find clones in the projects. It's
-very fast and has high precision. However, it's recall isn't great and it may miss many clones.
+\subsection*{Checker description}
 
-BasicCloneChecker is able to find code clones of types 1 and 2 with high precision. However, it
-is very sensitive to the slight changes in analyzed AST. Because of that even slightly changed 
-pieces of code (namely Code Clones of type 3) end up not detected. It detects similar sub-trees, so
-the detected piece of code should be a sub-tree of a single AST node.
+BasicCloneChecker is designed to be scalable and therefore we're focusing on high
+precision and speed rather than high recall. BasicCloneChecker is assumed not to cause
+huge compilation time losses and performance issues. This checker defines a "clones"
+to be a certain pair of AST subtrees.
 
-\subsection*{Computational complexity}
+This checker processes AST generated by Clang and performs enhanced Profiling technique
+used to match AST nodes and their subtrees. It uses hashing based on AST nodes'
+Profiles to divide AST nodes into clone groups and reports each clone group separately
+cutting-off few false-positives and ensuring that the AST tree accused of being a clone
+contains more than THRESHOLD AST nodes.
 
-It takes $O(s)$ (where s denotes statements count in analyzed AST) time to store all statements 
-from the AST and then it takes $O(x)$ (where x denotes each AST node child count) time to build the 
-profiles. Hash map is there to provide $O(1)$ computational complexity to access collisions as
-two statements and their sub-trees are considered to be clones if hashes of their Profiles are 
-equal. It makes the overall (worst-case scenario) computational complexity $O(n^2)$ (where n 
-denotes total number of AST nodes).
+BasicCloneChecker is able to find code clones of types I and II with high precision.
+However, it is very sensitive to the slight changes in analyzed AST.
 
-The heaviest part is building Profiles for each clang::Stmt and if I could make this process 
-incremental, so that building Profiles for some tree would have $O(n)$ (where n denotes number of 
-nodes in that tree) time instead of $O(n^2)$, I could reduce overall complexity to $O(n)$.
+Computational complexity of analyzing AST tree with $n$ nodes is $O(n^2)$. The heaviest
+part of implementation is building of profiles for an AST node and its subtrees. It's
+easy to understand that incremental profiling + caching may reduce the complexity to
+$O(n)$, but checker relies on current recursive implementation of profiling.
 
-%------------------------------------------------
+%----------------------------------------------------------------------------------------
+%	CLONE.ADVANCEDCLONECHECKER
+%----------------------------------------------------------------------------------------
 
 \section*{clone.AdvancedCloneChecker}
 
-AdvancedCloneChecker combines the Tree- and PDG-based techniques and implements the approach
-proposed by Jens Krinke in his paper \cite{FineGrainedPDG}. It detects clones of type 1, 2 and 3. 
-It relies on the implemented Fine-Grained PDG data structure, which is basically PDG built from AST 
-nodes. Then it runs the maximum similar subgraph searching algorithm to detect similar FGPDG 
-subgraphs and creates diagnostics.
+AdvancedCloneChecker combines the Tree- and PDG-based techniques and implements the 
+approach proposed by Jens Krinke in his paper \cite{FineGrainedPDG}. It detects clones
+of type 1, 2 and 3. It relies on the implemented Fine-Grained PDG data structure, which
+is basically a variation of PDG built from AST  nodes. Then it runs the maximum similar 
+subgraph searching algorithm to detect similar FGPDG subgraphs and creates if these
+subgraphs contain more than THRESHOLD nodes.
 
-The general problem "Finding maximum similar subgraphs" is NP-complete, that is why the implemented 
-algorithm is just an approximate approach, which is the best thing one could possibly do.
+The general problem "Finding maximum similar subgraphs" is NP-complete, that is why the 
+implemented algorithm is just an approximate approach, which is the best thing one could 
+possibly do.
 
-Granularity is very important part of this approach, because it only processes the comparison
-units and the partitioning part is essential. If chosen badly, it can lead to the state, in which
-the checker is right now: even if the algorithm extracts subgraphs with fairly good accuracy
-not many clones can be detected, because the comparison units are either to big or do not fit
-the needed conditions. The implemented algorithm partitions into connected components, which are
-compared against each other afterwards. This approach has many negative effects I encountered
-while processing large codebases.
+Granularity is very important part of this approach, because it only processes the 
+comparison units and the partitioning part is essential. If chosen badly, it can lead to 
+the state, in which the checker is right now: even if the algorithm extracts subgraphs 
+with fairly good accuracy not many clones can be detected, because the comparison units 
+are either to big or do not fit the needed conditions. The implemented algorithm 
+partitions into connected components, which are compared against each other afterwards. 
+This approach has many negative effects I encountered while processing large codebases.
 
-\subsection*{Computational complexity}
-
-The overall Computational complexity of the algorithm is $O(n^4)$ and it can not be reduced. It's 
-pretty slow, but the approach allows to detect even type 3 clones, which is valuable part.
+AdvancedCloneChecker should be used for a deeper analysis; it processes an AST with $n$
+nodes in $O(n^4)$ time and it can not be reduced. It's quite slow, but the approach
+allows to detect even type 3 clones.
 
 %----------------------------------------------------------------------------------------
-%	RESULTS 
+%	COMMON PROBLEMS
 %----------------------------------------------------------------------------------------
 
-\section*{Results}
+\section*{Common problems}
 
-This shows the performance measurement while compiling few open-source projects with and without
-BasicCloneChecker. The same tests weren't performed for AdvancedCloneChecker as it's still not
-quite ready to process large codebases.
+Both checkers are built in Clang Static Analyzer and therefore have certain restrictions.
+
+\begin{itemize}
+  \item Clang SA design doesn't allow the analysis of the whole codebase, it only allows
+  analyzing each Translation Unit separately. Obviously, some code clones may occur in
+  different Translation Units.
+  \item The diagnostics generated by both checkers are quite specific as warnings of each
+  clone class objects should come consequently. Therefore these diagnostics aren't hooked
+  to Clang SA BugReporter and aren't displayed in scan-build report.
+  \item Both checkers use magic numbers (THRESHOLD) while deciding whether to report a
+  code piece or not. It would be logical to give a control of these constants via some
+  Clang SA options. However, this isn't done for any of the existing SA checker and I
+  doubt that it meets expectations of the original Clang SA developers.
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+%	GETTING REAL 
+%----------------------------------------------------------------------------------------
+
+\section*{Getting real}
+
+Even though both checkers are WIP, they detected code clones in few built open-source
+project. Here's a performance report for each of built projects using BasicCloneChecker
+only.
 
 \begin{lstlisting}[frame=single]
 scan-build --use-analyzer=${PATH_TO_BUILT_CLANG} \
@@ -225,51 +223,26 @@ scan-build --use-analyzer=${PATH_TO_BUILT_CLANG} \
 \begin{center}\vspace{1cm}
 \begin{tabular}{l l l l}
 \toprule
-\textbf{Project} & \textbf{without fakec invocation, s.} & \textbf{clone.BasicCloneChecker, s.}\\
+\textbf{Project} & \textbf{without fakec invocation, s.} & 
+\textbf{BasicCloneChecker, s.} & \textbf{Clones found} \\
 \midrule
-Git &  84 & 144 \\
-SDL &  0  & 0   \\
-LLVM & 0  & 0   \\
-curl & 48 & 52  \\
+OpenSSL & 1m26s & 9m27s & 0 \\
+Git & 0m26s & 2m46s & 0 \\
+SDL & 0m26s & 1m59s & 0 \\
+LLVM + Clang & 48 & 52 & 0 \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\color{Green} Running time measurement}
 \end{center}\vspace{1cm}
 
-BasicCloneChecker detects many clones in SDL projects, which show that the library isn't designed
-really well. It also detects some clones in Git project. There weren't any reports generated while
-compiling LLVM+Clang.
-
-Unfortunately, I am unable to give the exact numbers as the reports contain some false-positives
-and garbage warnings at the moment.
-
-AdvancedCloneChecker also generates warnings for Git and SDL projects. No diagnostics were emitted
-in the process of compiling LLVM+Clang, too.
-
 LINK TO A SAMPLE REPORT CONTAINING FEW REAL CLONES FROM SDL, GIT, OTHER PROJECTS
-
-%----------------------------------------------------------------------------------------
-%	FORTHCOMING IMPROVEMENTS AND CONCLUSION
-%----------------------------------------------------------------------------------------
-
-\section*{Forthcoming Improvements and Conclusion}
-
-\begin{itemize}
-\item Before presenting clone.BasicCloneChecker to the Clang community and sending its patch to 
-the mainline it should no longer produce garbage warnings and and it should emit reports hooked to 
-the scan-build engine. It would take few fixes and improvements.
-\item However, clone.AdvancedCloneChecker still requires a lot of work: as running on the big 
-projects shows the granularity wasn't chosen well enough and it doesn't detect many clones in
-various big projects as it was expected. Some of checker parts may be reworked and I'll continue
-experimenting with different approaches. Potential new approach that would be tested in future
-is applying Value Graph Translation Validation technique \cite{ValueGraphLLVM}
-\end{itemize}
 
 %----------------------------------------------------------------------------------------
 %	REFERENCES
 %----------------------------------------------------------------------------------------
 
-\nocite{*} % Print all references regardless of whether they were cited in the poster or not
+\nocite{*}
+
 \bibliographystyle{plain} % Plain referencing style
 \bibliography{biblio} % Use the example bibliography file sample.bib
 
@@ -279,19 +252,11 @@ is applying Value Graph Translation Validation technique \cite{ValueGraphLLVM}
 
 \section*{Acknowledgements}
 
-Big thanks to ISP RAS research, who were so kind to share the results of their work with me.
+Big thanks to ISP RAS researchers, who were so kind to share the results of their work
+with me.
 
-I'd also like to thank Nick Lewycky, who did some initial work on detecting useless conditions
-for Clang.
-
-%----------------------------------------------------------------------------------------
-%	CODE
-%----------------------------------------------------------------------------------------
-
-\section*{Code}
-
-Code is avalible in my \href{https://github.com/omtcyf0/clang}{\color{blue} fork} of Clang on
-GitHub.
+I'd also like to thank Nick Lewycky, who did some initial work on detecting useless
+conditions for Clang. My first checker borrows few ideas from that work.
 
 %----------------------------------------------------------------------------------------
 
