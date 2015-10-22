@@ -101,6 +101,46 @@ as additional checkers for the Clang Static Analyzer. Clang SA along with scan-b
 are really easy to use and can generate informative reports containing all the warnings.
 
 %----------------------------------------------------------------------------------------
+%	TIKZ FIGURE
+%----------------------------------------------------------------------------------------
+
+\section*{Analysis scheme}
+
+% Define block styles used later
+
+\tikzstyle{sensor}=[draw, fill=blue!20, text width=5em, text centered,
+    minimum height=2.5em,drop shadow, rounded corners=1cm]
+
+% Define distances for bordering
+\def\blockdist{2.3}
+\def\edgedist{2.5}
+
+\vspace{1cm}
+
+\begin{tikzpicture}
+    \node (Analyzed_Sources) [sensor, fill=]  {Analyzed sources};
+    \path (Analyzed_Sources.east)+(3.0,0.0) node (scan-build)[sensor, fill=orange!30]
+          {scan-build};
+    \path (scan-build.east)+(3.0, 0.0) node (fake-compiler)[sensor] {Fake compiler};
+    \path (fake-compiler.east)+(4.0, 2.0) node (compiler)[sensor, fill=gray!20] 
+    	  {Compiler};
+    \path (fake-compiler.east)+(4.0, -2.0) node (static-analyzer)[sensor, fill=gray!20]
+          {Static Analyzer};
+    \path (compiler.east)+(4.0, 0.0) node (object-code)
+          [sensor, fill=black!60, text=white] {Object code};
+    \path (static-analyzer.east)+(4.0, 0.0) node (report)
+          [sensor, fill=red!40] {SA Report};
+    \draw[thick,->] (Analyzed_Sources.east) -- (scan-build.west);
+    \draw[thick,->] (scan-build.east) -- (fake-compiler.west);
+    \draw[thick,->] (fake-compiler.east) -- (compiler.west);
+    \draw[thick,->] (fake-compiler.east) -- (static-analyzer.west);
+    \draw[thick,->] (compiler.east) -- (object-code.west);
+    \draw[thick,->] (static-analyzer.east) -- (report.west);
+\end{tikzpicture}
+
+\vspace{1cm}
+
+%----------------------------------------------------------------------------------------
 %	CLONE TYPES
 %----------------------------------------------------------------------------------------
 
@@ -121,15 +161,11 @@ to get a better understanding what can the current implementation do and what ca
   implemented by different syntactic variants.
 \end{description}
 
-
-
 %----------------------------------------------------------------------------------------
 %	CLONE.BASICCLONECHECKER
 %----------------------------------------------------------------------------------------
 
 \section*{clone.BasicCloneChecker}
-
-\subsection*{Checker description}
 
 BasicCloneChecker is designed to be scalable and therefore we're focusing on high
 precision and speed rather than high recall. BasicCloneChecker is assumed not to cause
