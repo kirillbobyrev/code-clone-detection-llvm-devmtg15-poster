@@ -81,15 +81,16 @@
 
 \section*{Motivation}
 
-The copy-paste is a common programming practice. Recent studies show that large 5-20\% of 
-code in large codebases is either equal or similar to other code pieces in this project. 
-This causes troubles and makes development process way harder. Having a code clone in a 
-system almost always means that its design needs serious improvements. Large projects are
-developed by numerous people and fixing a bug found in one code clone instance may cause
-unexpected results, because this fix most likely won't be applied to every other 
-instance similar to the fixed one. Thus said, the practice of copy-pasting a piece of
-code into multiple locations. Having a tool that detects these clones and produces a
-human-readable report allows finding such pieces of code and improving the architecture.
+The copy-paste is a common programming practice. Recent studies \cite{Chanchal2007} show 
+that large 5-20\% of code in large codebases is either equal or similar to other code 
+pieces in this project. This causes troubles and makes development process way harder. 
+Having a code clone in a system almost always means that its design needs serious 
+improvements. Large projects are developed by numerous people and fixing a bug found in 
+one code clone instance may cause unexpected results, because this fix most likely won't 
+be applied to every other instance similar to the fixed one. Thus said, the practice of 
+copy-pasting a piece of code into multiple locations. Having a tool that detects these 
+clones and produces a human-readable report allows finding such pieces of code and 
+improving the architecture.
 
 %----------------------------------------------------------------------------------------
 %	INFRASTRUCTURE CHOICE
@@ -99,7 +100,7 @@ human-readable report allows finding such pieces of code and improving the archi
 
 Even though such tools exist, most of them are not easy to use. Most of them are also
 outdated and because of that they can't catch up with the latest language standards and
-new features. Building a Code Clone Detection Tool around Clang and Clang Static Analyzer
+features. Building a Code Clone Detection Tool around Clang and Clang Static Analyzer
 allows not worrying about these problems. LLVM and Clang provide a great infrastructure
 for building such a tool and provide the stability. Therefore the tool is implemented
 as additional checkers for the Clang Static Analyzer. Clang SA along with scan-build
@@ -341,7 +342,7 @@ Git & 0m26s & 2m46s & 34 \\
 SDL & 0m26s & 1m59s & 170 \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\color{Green} Running time measurement}
+\captionof{table}{Running time measurement}
 \end{center}\vspace{1cm}
 
 %----------------------------------------------------------------------------------------
@@ -352,7 +353,7 @@ SDL & 0m26s & 1m59s & 170 \\
 
 The results show that the \textit{BasicCloneChecker} stable and scalable enough, though
 it needs few enhancements, which will make it even better and production-ready. However,
-\textit{AdvancedCloneChecker} is totally experimental and it needs serious improvements
+\textit{AdvancedCloneChecker} is totally experimental and needs serious improvements
 even though it detects clones in large codebases.
 
 %----------------------------------------------------------------------------------------
@@ -370,10 +371,10 @@ even though it detects clones in large codebases.
 
 \section*{Acknowledgements}
 
-Big thanks to ISP RAS researchers, who were so kind to share the results of their work
-with me.
+I would like to thank ISP RAS researchers who were so kind to share the results of their
+work with me.
 
-I'd also like to thank Nick Lewycky, who did some initial work on detecting useless
+I should also thank Nick Lewycky, who did some initial work on detecting useless
 conditions for Clang. My first checker borrows few ideas from that work.
 
 %----------------------------------------------------------------------------------------
