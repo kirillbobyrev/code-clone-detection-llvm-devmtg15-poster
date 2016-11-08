@@ -85,7 +85,309 @@ an efficient solution.
 I would like to thank Vassil Vassilev for guidance and support, LLVM Community for great suggestions and all the work done towards
 supporting new contributors and, of course, Google - for creating a great opportunity for students from all over the world and funding.
 
-## Notes {#notes}
+## Similar pieces of code found using proposed technique
+
+Compared to C++ projects, projects written in C suffer from code duplication issues significantly more.
+
+The following pieces of code can be easily wrapped into functions to prevent potential errors, such as fixing a bug in one of the
+clone intstances and ignoring the others.
+
+### OpenSSL
+
+A little more throughout analysis was able to identify around 500 big enough (see following examples) code clones.
+
+Project commit used for analysis: b77b6127e8de38726f37697bbbc736ced7b49771.
+
+#### crypto/bf/bf_cfb64.c
+
+```c
+    if (encrypt) {
+        while (l--) {
+            if (n == 0) {
+                n2l(iv, v0);
+                ti[0] = v0;
+                n2l(iv, v1);
+                ti[1] = v1;
+                BF_encrypt((BF_LONG *)ti, schedule);
+                iv = (unsigned char *)ivec;
+                t = ti[0];
+                l2n(t, iv);
+                t = ti[1];
+                l2n(t, iv);
+                iv = (unsigned char *)ivec;
+            }
+            c = *(in++) ^ iv[n];
+            *(out++) = c;
+            iv[n] = c;
+            n = (n + 1) & 0x07;
+        }
+    } else {
+        while (l--) {
+            if (n == 0) {
+                n2l(iv, v0);
+                ti[0] = v0;
+                n2l(iv, v1);
+                ti[1] = v1;
+                BF_encrypt((BF_LONG *)ti, schedule);
+                iv = (unsigned char *)ivec;
+                t = ti[0];
+                l2n(t, iv);
+                t = ti[1];
+                l2n(t, iv);
+                iv = (unsigned char *)ivec;
+            }
+            cc = *(in++);
+            c = iv[n];
+            iv[n] = cc;
+            *(out++) = c ^ cc;
+            n = (n + 1) & 0x07;
+        }
+    }
+```
+
+#### crypto/ec/ecp_smpl.c
+
+```c
+    if (!b->Z_is_one) {
+        if (!field_sqr(group, Zb23, b->Z, ctx))
+            goto end;
+        if (!field_mul(group, tmp1, a->X, Zb23, ctx))
+            goto end;
+        tmp1_ = tmp1;
+    } else
+        tmp1_ = a->X;
+    if (!a->Z_is_one) {
+        if (!field_sqr(group, Za23, a->Z, ctx))
+            goto end;
+        if (!field_mul(group, tmp2, b->X, Za23, ctx))
+            goto end;
+        tmp2_ = tmp2;
+    } else
+        tmp2_ = b->X;
+
+    /* compare  X_a*Z_b^2  with  X_b*Z_a^2 */
+    if (BN_cmp(tmp1_, tmp2_) != 0) {
+        ret = 1;                /* points differ */
+        goto end;
+    }
+
+    if (!b->Z_is_one) {
+        if (!field_mul(group, Zb23, Zb23, b->Z, ctx))
+            goto end;
+        if (!field_mul(group, tmp1, a->Y, Zb23, ctx))
+            goto end;
+        /* tmp1_ = tmp1 */
+    } else
+        tmp1_ = a->Y;
+    if (!a->Z_is_one) {
+        if (!field_mul(group, Za23, Za23, a->Z, ctx))
+            goto end;
+        if (!field_mul(group, tmp2, b->Y, Za23, ctx))
+            goto end;
+        /* tmp2_ = tmp2 */
+    } else
+        tmp2_ = b->Y;
+```
+
+#### crypto/rsa/rsa_x931g.c
+```c
+    if (Xp && rsa->p == NULL) {
+        rsa->p = BN_new();
+        if (rsa->p == NULL)
+            goto err;
+
+        if (!BN_X931_derive_prime_ex(rsa->p, p1, p2,
+                                     Xp, Xp1, Xp2, e, ctx, cb))
+            goto err;
+    }
+
+    if (Xq && rsa->q == NULL) {
+        rsa->q = BN_new();
+        if (rsa->q == NULL)
+            goto err;
+        if (!BN_X931_derive_prime_ex(rsa->q, q1, q2,
+                                     Xq, Xq1, Xq2, e, ctx, cb))
+            goto err;
+    }
+```
+
+### Vim
+
+Patch 8.0.0071.
+
+Around 300 similar code pieces in total found in Vim.
+
+#### src/farsi.c
+
+```c
+    // Chunk 1.
+    switch (gchar_cursor())
+    {
+	case ALEF:
+		tempc = ALEF_;
+		break;
+	case ALEF_U_H:
+		tempc = ALEF_U_H_;
+		break;
+	case _AYN:
+		tempc = _AYN_;
+		break;
+	case AYN:
+		tempc = AYN_;
+		break;
+	case _GHAYN:
+		tempc = _GHAYN_;
+		break;
+	case GHAYN:
+		tempc = GHAYN_;
+		break;
+	case _HE:
+		tempc = _HE_;
+		break;
+	case YE:
+		tempc = YE_;
+		break;
+	case IE:
+		tempc = IE_;
+		break;
+	case TEE:
+		tempc = TEE_;
+		break;
+	case YEE:
+		tempc = YEE_;
+		break;
+	default:
+		tempc = 0;
+    }
+
+...
+    // Chunk 2.
+    switch (gchar_cursor())
+    {
+	case ALEF:
+		tempc = ALEF_;
+		break;
+	case ALEF_U_H:
+		tempc = ALEF_U_H_;
+		break;
+	case _AYN:
+		tempc = _AYN_;
+		break;
+	case AYN:
+		tempc = AYN_;
+		break;
+	case _GHAYN:
+		tempc = _GHAYN_;
+		break;
+	case GHAYN:
+		tempc = GHAYN_;
+		break;
+	case _HE:
+		tempc = _HE_;
+		break;
+	case YE:
+		tempc = YE_;
+		break;
+	case IE:
+		tempc = IE_;
+		break;
+	case TEE:
+		tempc = TEE_;
+		break;
+	case YEE:
+		tempc = YEE_;
+		break;
+	default:
+		tempc = 0;
+    }
+```
+
+#### evalfunc.c
+
+```c
+    // Code chunk 1.
+    /* Optional arguments: line number to stop searching and timeout. */
+    if (argvars[1].v_type != VAR_UNKNOWN && argvars[2].v_type != VAR_UNKNOWN)
+    {
+	lnum_stop = (long)get_tv_number_chk(&argvars[2], NULL);
+	if (lnum_stop < 0)
+	    goto theend;
+#ifdef FEAT_RELTIME
+	if (argvars[3].v_type != VAR_UNKNOWN)
+	{
+	    time_limit = (long)get_tv_number_chk(&argvars[3], NULL);
+	    if (time_limit < 0)
+		goto theend;
+	}
+#endif
+    }
+
+...
+  // Code chunk 2.
+	if (argvars[5].v_type != VAR_UNKNOWN)
+	{
+	    lnum_stop = (long)get_tv_number_chk(&argvars[5], NULL);
+	    if (lnum_stop < 0)
+		goto theend;
+#ifdef FEAT_RELTIME
+	    if (argvars[6].v_type != VAR_UNKNOWN)
+	    {
+		time_limit = (long)get_tv_number_chk(&argvars[6], NULL);
+		if (time_limit < 0)
+		    goto theend;
+	    }
+#endif
+	}
+```
+
+### Git
+
+Commit be5a750939c212bc0781ffa04fabcfd2b2bd744e.
+
+#### remote-curl.c
+
+```c
+       } else if (!strcmp(name, "cloning")) {
+		if (!strcmp(value, "true"))
+			options.cloning = 1;
+		else if (!strcmp(value, "false"))
+			options.cloning = 0;
+		else
+			return -1;
+		return 0;
+	} else if (!strcmp(name, "update-shallow")) {
+		if (!strcmp(value, "true"))
+			options.update_shallow = 1;
+		else if (!strcmp(value, "false"))
+			options.update_shallow = 0;
+		else
+			return -1;
+		return 0;
+```
+
+#### xdiff/xprepare.c
+
+This one looks especially weird.
+
+```c
+	if ((mlim = xdl_bogosqrt(xdf1->nrec)) > XDL_MAX_EQLIMIT)
+		mlim = XDL_MAX_EQLIMIT;
+	for (i = xdf1->dstart, recs = &xdf1->recs[xdf1->dstart]; i <= xdf1->dend; i++, recs++) {
+		rcrec = cf->rcrecs[(*recs)->ha];
+		nm = rcrec ? rcrec->len2 : 0;
+		dis1[i] = (nm == 0) ? 0: (nm >= mlim) ? 2: 1;
+	}
+
+	if ((mlim = xdl_bogosqrt(xdf2->nrec)) > XDL_MAX_EQLIMIT)
+		mlim = XDL_MAX_EQLIMIT;
+	for (i = xdf2->dstart, recs = &xdf2->recs[xdf2->dstart]; i <= xdf2->dend; i++, recs++) {
+		rcrec = cf->rcrecs[(*recs)->ha];
+		nm = rcrec ? rcrec->len1 : 0;
+		dis2[i] = (nm == 0) ? 0: (nm >= mlim) ? 2: 1;
+	}
+```
+
+## Notes
 
 [0] For reference on Code Clone Taxonomy see [fairly recent paper](http://www.sciencedirect.com/science/article/pii/S0167642309000367)
 by Roy et al.
