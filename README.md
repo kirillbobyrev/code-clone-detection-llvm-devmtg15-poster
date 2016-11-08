@@ -19,7 +19,7 @@ To see what it's capable of see related [unit tests](https://github.com/omtcyfz/
 Clang Static Analyzer is shipped with Clang binary and if one wants to see what the upstream implementation can detect this is how the
 check should be invoked:
 
-`$ clang++ -cc1 -analyze -analyzer-checker=core.alpha.clone.CloneChecker source.cpp`
+`$ clang++ -cc1 -analyze -analyzer-checker=alpha.clone.CloneChecker source.cpp`
 
 ## Google Summer of Code 2015
 
