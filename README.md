@@ -1,7 +1,7 @@
 Table of Contents
 =================
 
-   * [llvm-devmtg15-poster](#llvm-devmtg15-poster)
+   * [code-clone-detection-llvm-devmtg15-poster](#code-clone-detection-llvm-devmtg15-poster)
       * [Description](#description)
       * [Google Summer of Code 2015](#google-summer-of-code-2015)
       * [Motivation](#motivation)
@@ -22,33 +22,34 @@ Table of Contents
             * [xdiff/xprepare.c](#xdiffxpreparec)
       * [Notes](#notes)
 
-# llvm-devmtg15-poster
+# code-clone-detection-llvm-devmtg15-poster
 
-Code Clone Detection in Clang Static Analyzer poster for [LLVM Developer's
-Meeting 2015](http://llvm.org/devmtg/2015-10/).
+This repository contains LaTeX source code for the "Code Clone Detection in
+Clang Static Analyzer" poster.
 
-[Compiled PDF
+[See compiled PDF
 version](https://omtcyfz.github.io/assets/code-clone-detection-poster.pdf) is
 availible on my Github static site.
 
 ## Description
 
-This repository contains LaTeX sources for the poster I wrote for LLVM
-Developer's Meeting 2015.  LLVM Developers' Meeting is the largest conference
-for compiler specialists from all over the world held every year. Doznes of
-  Google, Apple and Intel engineers are attending the conference and exchanging
-  valuable experience.
+The poster was prepared for [LLVM Developer's Meeting
+2015](http://llvm.org/devmtg/2015-10/). LLVM Developers' Meeting is the
+largest conference for compiler specialists from all over the world held every
+year. Dozens of engineers working at Google, Apple and Intel are attending the
+conference and exchanging valuable experience.
 
-The results of this research resulted in `alpha.clone.CloneChecker` appearance
-in [Clang Static Analyzer](http://clang-analyzer.llvm.org/index.html). This
-check is capable of detecting a part of what the original imporementation was
-able to detect, but is more stable and production-ready.
+This research resulted in `alpha.clone.CloneChecker` in [Clang Static
+Analyzer](http://clang-analyzer.llvm.org/index.html). This check is capable of
+detecting a part of what the original imporementation was able to detect, but
+is more stable and production-ready.
 
-To see what it's capable of see related [unit
-tests](https://github.com/omtcyfz/clang/tree/master/test/Analysis/copypaste).
-
-Clang Static Analyzer is shipped with Clang binary and if one wants to see what
-the upstream implementation can detect this is how the check should be invoked:
+[Unit
+tests](https://github.com/omtcyfz/clang/tree/master/test/Analysis/copypaste)
+give a good overview of code pieces, which can be detected by current upstream
+implementation. `CloneChecker` is a part of Clang Static Analyzer, which is
+shipped with Clang binary. To run this check on a custom file just install
+Clang and type the following command.
 
 `$ clang++ -cc1 -analyze -analyzer-checker=alpha.clone.CloneChecker source.cpp`
 
@@ -105,7 +106,9 @@ is able to process huge open-source projects and find many similar pieces of
 code:
 
 |Project|Normal build time|Build with BasicCloneCheck time|Clones found|
-|---|---|---|---| |OpenSSL|1m26s|9m27s|180| |Git|0m26s|2m46s|34|
+|---|---|---|---|
+|OpenSSL|1m26s|9m27s|180|
+|Git|0m26s|2m46s|34|
 |SDL|0m26s|1m59s|170| 
 
 ## Future work
@@ -115,12 +118,12 @@ improvements to [clang-rename](http://clang.llvm.org/extra/clang-rename.html)
 and started clang-refactor (see [design
 doc](https://docs.google.com/document/d/1w9IkR0_Gqmd5w4CZ2t_ZDZrNLYVirQPyMS41533HQZE)
 for reference). Therefore I was unable to continue my work on coding side and
-  only participated in few discussions. [Raphael
-  Isemann](https://github.com/Teemperor) under mentorship of Vassil Vassilev
-  and with the help of Apple Static Anlysis team engineers did a great job
-  improving current infrastructure (see [GSoC project
-  page](https://docs.google.com/document/d/1w9IkR0_Gqmd5w4CZ2t_ZDZrNLYVirQPyMS41533HQZE))
-  and finally pushing the code to the Clang repository.
+only participated in few discussions. [Raphael
+Isemann](https://github.com/Teemperor) under mentorship of Vassil Vassilev
+and with the help of Apple Static Anlysis team engineers did a great job
+improving current infrastructure (see [GSoC project
+page](https://docs.google.com/document/d/1w9IkR0_Gqmd5w4CZ2t_ZDZrNLYVirQPyMS41533HQZE))
+and finally pushing the code to the Clang repository.
 
 Clang Static Analyzer isn't able to pass information between translation units
 and this, unfortunately, is a huge limitation for Code Clone Detection because
@@ -133,8 +136,8 @@ for an efficient solution.
 
 I would like to thank Vassil Vassilev for guidance and support, LLVM Community
 for great suggestions and all the work done towards supporting new contributors
-  and, of course, Google - for creating a great opportunity for students from
-  all over the world and funding.
+and, of course, Google - for creating a great opportunity for students from
+all over the world and funding.
 
 ## Similar pieces of code found using proposed technique
 
