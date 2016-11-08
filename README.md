@@ -71,7 +71,8 @@ During Summer 2016 I was an intern in Google Munich, where I introduced major im
 [clang-rename](http://clang.llvm.org/extra/clang-rename.html) and started clang-refactor (see
 [design doc](https://docs.google.com/document/d/1w9IkR0_Gqmd5w4CZ2t_ZDZrNLYVirQPyMS41533HQZE) for reference). Therefore I was unable to
 continue my work on coding side and only participated in few discussions. [Raphael Isemann](https://github.com/Teemperor) under
-mentorship of Vassil Vassilev and help of Apple's engineers did a great job improving current infrastructure (see
+mentorship of Vassil Vassilev and with the help of Apple Static Anlysis team engineers did a great job improving current
+infrastructure (see
 [GSoC project page](https://docs.google.com/document/d/1w9IkR0_Gqmd5w4CZ2t_ZDZrNLYVirQPyMS41533HQZE)) and finally pushing the code to
 the Clang repository.
 
