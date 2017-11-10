@@ -27,9 +27,9 @@ Table of Contents
 This repository contains LaTeX source code for the "Code Clone Detection in
 Clang Static Analyzer" poster.
 
-[See compiled PDF
+[Compiled PDF
 version](https://omtcyfz.github.io/assets/code-clone-detection-poster.pdf) is
-availible on my Github static site.
+available on my personal page.
 
 ## Description
 
@@ -41,7 +41,7 @@ conference and exchanging valuable experience.
 
 This research resulted in `alpha.clone.CloneChecker` in [Clang Static
 Analyzer](http://clang-analyzer.llvm.org/index.html). This check is capable of
-detecting a part of what the original imporementation was able to detect, but
+detecting a part of what the original implementation was able to detect, but
 is more stable and production-ready.
 
 [Unit
@@ -61,14 +61,14 @@ The work described in this poster was done in terms of [Google Summer of Code
 I was working with LLVM Community under mentorship of [Vassil
 Vassilev](https://github.com/vgvassilev)
 ([CERN](https://home.cern/)/[FNAL](http://www.fnal.gov/)). Vassil is a known
-compiler specilist and the creator of [Cling](https://root.cern.ch/cling), an
+compiler specialist and the creator of [Cling](https://root.cern.ch/cling), an
 interactive C++ interpreter used in CERN.
 
 The [GSoC project
 page](https://www.google-melange.com/archive/gsoc/2015/orgs/llvm/projects/arcadiaq.html)
 sadly doesn't contain much information due to my lack of knowledge that a large
 part of the summary I wrote won't be accessible from there. This poster,
-though, containes an extensive overview of the work done during Summer 2015.
+though, contains an extensive overview of the work done during Summer 2015.
 
 ## Motivation
 
@@ -98,7 +98,7 @@ Type II and Type III clones (please refer to Code Clone Taxonomy in
 performance issue. My work combines performance efficiency while not limiting
 detection capabilities.
 
-The code used for this paper is availible in [my fork of Clang
+The code used for this paper is available in [my fork of Clang
 repository](https://github.com/omtcyfz/clang/tree/CloneDetection).
 
 The following table shows that even a naive implementation of Code Clone check
@@ -145,7 +145,7 @@ Compared to C++ projects, projects written in C suffer from code duplication
 issues significantly more.
 
 The following pieces of code can be easily wrapped into functions to prevent
-potential errors, such as fixing a bug in one of the clone intstances and
+potential errors, such as fixing a bug in one of the clone instances and
 ignoring the others.
 
 ### OpenSSL
