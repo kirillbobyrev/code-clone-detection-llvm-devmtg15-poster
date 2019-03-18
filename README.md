@@ -28,7 +28,7 @@ This repository contains LaTeX source code for the "Code Clone Detection in
 Clang Static Analyzer" poster.
 
 [Compiled PDF
-version](https://kbobyrev.github.io/resources/code-clone-detection.pdf) is
+version](https://kirillbobyrev.github.io/resources/code-clone-detection.pdf) is
 available on my personal page.
 
 ## Description
@@ -45,7 +45,7 @@ detecting a part of what the original implementation was able to detect, but
 is more stable and production-ready.
 
 [Unit
-tests](https://github.com/kbobyrev/clang/tree/master/test/Analysis/copypaste)
+tests](https://github.com/kirillbobyrev/clang/tree/master/test/Analysis/copypaste)
 give a good overview of code pieces, which can be detected by current upstream
 implementation. `CloneChecker` is a part of Clang Static Analyzer, which is
 shipped with Clang binary. To run this check on a custom file just install
