@@ -6,7 +6,7 @@
 %
 % The a0poster class was created by:
 % Gerlinde Kettl and Matthias Weiser (tex@kettl.de)
-% 
+%
 % This template has been downloaded from:
 % http://www.LaTeXTemplates.com
 %
@@ -51,7 +51,7 @@
 \begin{document}
 
 %----------------------------------------------------------------------------------------
-%	POSTER HEADER 
+%	POSTER HEADER
 %----------------------------------------------------------------------------------------
 
 \begin{minipage}[b]{0.75\linewidth}
@@ -59,7 +59,7 @@
 \Huge\textit{Detecting Copy-paste using Static Analysis}\\[2cm] % Subtitle
 \huge \textbf{Kirill Bobyrev \& Vassil Vassilev}\\[0.5cm] % Author(s)
 \huge MIPT \& CERN\\[0.4cm] % University/organization
-\Large \texttt{kbobyrev@yandex.com}\\
+\Large \texttt{kirillbobyrev@gmail.com}\\
 \Large \texttt{vvasilev@cern.ch}\\
 \end{minipage}
 %
@@ -82,14 +82,14 @@
 \section*{Motivation}
 
 The copy-paste is a common programming practice. Recent studies \cite{Chanchal2007} show
-that large 5-20\% of code in large codebases is either equal or similar to other code 
-pieces in this project. This causes troubles and makes development process way harder. 
-Having a code clone in a system almost always means that its design needs serious 
-improvements. Large projects are developed by numerous people and fixing a bug found in 
-one code clone instance may cause unexpected results, because this fix most likely won't 
-be applied to every other instance similar to the fixed one. Thus said, the practice of 
-copy-pasting a piece of code into multiple locations. Having a tool that detects these 
-clones and produces a human-readable report allows finding such pieces of code and 
+that large 5-20\% of code in large codebases is either equal or similar to other code
+pieces in this project. This causes troubles and makes development process way harder.
+Having a code clone in a system almost always means that its design needs serious
+improvements. Large projects are developed by numerous people and fixing a bug found in
+one code clone instance may cause unexpected results, because this fix most likely won't
+be applied to every other instance similar to the fixed one. Thus said, the practice of
+copy-pasting a piece of code into multiple locations. Having a tool that detects these
+clones and produces a human-readable report allows finding such pieces of code and
 improving the architecture.
 
 %----------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ are really easy to use and can generate informative reports containing all the w
     \path (Analyzed_Sources.east)+(3.0,0.0) node (scan-build)[sensor]
           {scan-build};
     \path (scan-build.east)+(3.0, 0.0) node (fake-compiler)[sensor] {Fake compiler};
-    \path (fake-compiler.east)+(4.0, 2.0) node (compiler)[sensor] 
+    \path (fake-compiler.east)+(4.0, 2.0) node (compiler)[sensor]
     	  {Compiler};
     \path (fake-compiler.east)+(4.0, -2.0) node (static-analyzer)[sensor, fill=gray!20]
           {Static Analyzer};
@@ -200,16 +200,16 @@ which is basically a variation of PDG built from AST  nodes. Then it runs the ma
 similar subgraph searching algorithm to detect similar FGPDG subgraphs and creates if
 these subgraphs contain more than THRESHOLD nodes.
 
-The general problem "Finding maximum similar subgraphs" is NP-complete, that is why the 
-implemented algorithm is just an approximate approach, which is the best thing one could 
+The general problem "Finding maximum similar subgraphs" is NP-complete, that is why the
+implemented algorithm is just an approximate approach, which is the best thing one could
 possibly do.
 
-Granularity is very important part of this approach, because it only processes the 
-comparison units and the partitioning part is essential. If chosen badly, it can lead to 
-the state, in which the checker is right now: even if the algorithm extracts subgraphs 
-with fairly good accuracy not many clones can be detected, because the comparison units 
-are either to big or do not fit the needed conditions. The implemented algorithm 
-partitions into connected components, which are compared against each other afterwards. 
+Granularity is very important part of this approach, because it only processes the
+comparison units and the partitioning part is essential. If chosen badly, it can lead to
+the state, in which the checker is right now: even if the algorithm extracts subgraphs
+with fairly good accuracy not many clones can be detected, because the comparison units
+are either to big or do not fit the needed conditions. The implemented algorithm
+partitions into connected components, which are compared against each other afterwards.
 This approach has many negative effects I encountered while processing large codebases.
 
 AdvancedCloneChecker should be used for a deeper analysis; it processes an AST with $n$
@@ -311,7 +311,7 @@ Both checkers are built in Clang Static Analyzer and therefore have certain rest
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
-%	GETTING REAL 
+%	GETTING REAL
 %----------------------------------------------------------------------------------------
 
 \section*{Getting real}
@@ -333,7 +333,7 @@ scan-build --use-analyzer=${PATH_TO_BUILT_CLANG} \
 \begin{center}\vspace{1cm}
 \begin{tabular}{l l l l}
 \toprule
-\textbf{Project} & \textbf{without fakec invocation} & 
+\textbf{Project} & \textbf{without fakec invocation} &
 \textbf{BasicCloneChecker} & \textbf{Clones found} \\
 \midrule
 LLVM + Clang & 18m10s & 17m53s & 0 \\

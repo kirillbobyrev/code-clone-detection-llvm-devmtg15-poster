@@ -27,9 +27,7 @@ Table of Contents
 This repository contains LaTeX source code for the "Code Clone Detection in
 Clang Static Analyzer" poster.
 
-[Compiled PDF
-version](https://kirillbobyrev.github.io/resources/code-clone-detection.pdf) is
-available on my personal page.
+[Compiled PDF version](./poster.pdf).
 
 ## Description
 
